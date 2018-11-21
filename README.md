@@ -5,7 +5,7 @@ Installation, build and deploy instructions for Ubuntu 18.04 LTS.
 
 # 1 Build on development machine
 
-Log onto the development machine
+Log onto the development machine.
 
 
 # 1.1 Install Java
@@ -26,41 +26,71 @@ Install for current user.
 
 ## 1.3 Download OpenThesaurus
 
-    cd ~/workspace
-    wget https://github.com/danielnaber/openthesaurus/archive/master.zip
-    unzip master.zip
-    rm -f master.zip
+Navigate to a directory to perform the configuration and build.
+
+    cd ~/workspace/
+
+If previously, a `git clone` was done, do the following to update the repo.
+
+    cd openthesaurus/
+    git checkout .
+    git pull -r
+
+Note that this will undo all custom configuration!
+
+Otherwise, clone the repo.
+
+    git clone https://github.com/danielnaber/openthesaurus.git
+    cd openthesaurus/
 
 
-## 1.4 Build WAR file
+## 1.4 Apply custom configuration
 
-QUESTION 1: Should the database connector be added before the grails step?
+Compare the shipped configuration files with the custom configuration files.
 
-    cd openthesaurus-master
-    vi grails-app/conf/application.yml build/resources/main/application.yml
+    diff -Nrup grails-app/conf/application.yml ../conf/opentaal-openthesaurus/application.yml
+    diff -Nrup grails-app/conf/application-development.properties ../conf/opentaal-openthesaurus/application-development.properties
+    diff -Nrup grails-app/conf/application-production.properties ../conf/opentaal-openthesaurus/application-production.properties
 
-Search for `org.mariadb.jdbc.Driver` and replace with `com.mysql.jdbc.Driver` (Note that there is no `db` after `mysql` and it is `com` instead of `org`.)
+If no changes need to be made to the custom configuration files, copy these to overwrite the default configuration.
 
-Search for `username: vionto` and replace with `username: openthesaurus`
+    cp -f ../opentaal-openthesaurus/conf/* grails-app/conf/
 
-Search for `password: vionto` and replace with `password: ******`
+Set the database password where `******` is found.
 
-Search for `url: jdbc:mariadb://127.0.0.1:3306/viontoDevDb` and replace with `url: jdbc:mysql://127.0.0.1:3306/openthesaurus` (Note that there is no `db` after `mysql`.)
+    vi grails-app/conf/application.yml
 
-Search for `url: jdbc:h2:./prodDb` and replace with `url: jdbc:h2:./openthesaurus`
+Add the database connector.
 
-QUESTION 2: Does this remove the need for datasource.properties later on?
+    cp -f ../opentaal-openthesaurus/1804/mysql-connector-java-8.0.13.jar lib/
+
+Note that installation of the database connection via a package from the operating system will not be available for Tomcat.
+
+This file was retrieved for Ubuntu 18.04 from https://dev.mysql.com/downloads/connector/j/ by doing the following. These steps are only needed when getting a newer version of the database adapter! **Hence, skip the following.**
+
+    cd /tmp
+    wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java_8.0.13-1ubuntu18.04_all.deb
+    dpkg -x mysql-connector-java_8.0.13-1ubuntu18.04_all.deb .
+    cp usr/share/java/mysql-connector-java-8.0.13.jar ~/workspace/opentaal-openthesaurus/1804/
+    cd ~/workspace/opentaal-openthesaurus/
+
+(For Ubuntu 18.10, download via https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java_8.0.13-1ubuntu18.10_all.deb or directly use `../opentaal-openthesaurus/1810/mysql-connector-java-8.0.13.jar` from this repository.)
+
+
+## 1.5 Build WAR file
+
+Do the actual build.
 
     grails war
 
-Copy the WAR file to the deployment machine
+Copy the WAR file to the deployment machine.
 
     scp `ls build/libs/openthesaurus-*.war|sort -n|tail -1` thehostname:/tmp
 
 
 # 2 Installation on deployment machine
 
-Log onto the deployment machine
+Log onto the deployment machine with SSH.
 
 ## 2.1 Create database
 
@@ -73,14 +103,12 @@ This assumes you already have MySQL running.
     grant all privileges on openthesaurus.* to 'openthesaurus'@'localhost';
     exit
 
-Test database with
+Test database with the following, should report on an empty set of tables.
 
     mysql -D openthesaurus -u openthesaurus -p
     ******
     show tables;
     exit
-
-should report on an empty set of tables.
 
 
 ## 2.2 Install Tomcat
@@ -104,43 +132,26 @@ Remove the contents of Tomcat's `ROOT` directory
 
     sudo rm -rf /var/lib/tomcat8/webapps/ROOT/*
 
-Extract the war file
+Extract the war file.
 
     sudo unzip -d /var/lib/tomcat8/webapps/ROOT/ `ls /tmp/openthesaurus-*.war|sort -n|tail -1`
 
-Add database access
-
-    sudo vi /var/lib/tomcat8/webapps/ROOT/WEB-INF/classes/datasource.properties
-
-and add
-
-    dataSource.url=jdbc:mysql://127.0.0.1:3306/openthesaurus?useUnicode=true&characterEncoding=utf-8
-    dataSource.driverClassName=com.mysql.jdbc.Driver
-    dataSource.username=openthesaurus
-    dataSource.password=******
-    dataSource.dbCreate=update
+Note that no extra configuration is needed, even though some old documentation might suggest that.
 
 
-## 2.4 Install database connector 
+## 2.4 Restart Tomcat
 
-Get download link for Ubuntu 18.04 from https://dev.mysql.com/downloads/connector/j/
+In another terminal, monitor the log file.
 
-    cd /tmp
-    wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java_8.0.13-1ubuntu18.04_all.deb
-    dpkg -x mysql-connector-java_8.0.13-1ubuntu18.04_all.deb .
-    sudo cp usr/share/java/mysql-connector-java-8.0.13.jar /var/lib/tomcat8/webapps/ROOT/WEB-INF/lib/
+    sudo tail -f /var/log/tomcat8/catalina.out
 
-QUESTION 3: The package libmysql-java has a file called /usr/share/java/mysql-connector-java-5.1.45.jar Is that also fine the use?
-
-
-## 2.5 Restart Tomcat
-
-In another terminal, monitor the log file with
-
-    sudo tail -f /var/log/tomcat8/cataline.out
-
-Restart Tomcat
+Restart Tomcat.
 
     sudo service tomcat8 restart
 
 
+## 2.5 Visit the website
+
+Visit the instance of OpenThesaurus which is now.
+
+    http://thehostname:8080/
