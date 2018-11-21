@@ -48,17 +48,23 @@ Otherwise, clone the repo.
 
 Compare the shipped configuration files with the custom configuration files.
 
-    diff -Nrup grails-app/conf/application.yml ../conf/opentaal-openthesaurus/application.yml
-    diff -Nrup grails-app/conf/application-development.properties ../conf/opentaal-openthesaurus/application-development.properties
-    diff -Nrup grails-app/conf/application-production.properties ../conf/opentaal-openthesaurus/application-production.properties
+    diff -Nup grails-app/conf/application.yml ../opentaal-openthesaurus/conf/application.yml
+    diff -Nup grails-app/conf/application-development.properties ../opentaal-openthesaurus/conf/application-development.properties
+    diff -Nup grails-app/conf/application-production.properties ../opentaal-openthesaurus/conf/application-production.properties
+    diff -Nup grails-app/i18n/messages_nl.properties ../opentaal-openthesaurus/i18n/messages.properties
+
+Note that the last filename is without `_nl` and needs to be as such.
 
 If no changes need to be made to the custom configuration files, copy these to overwrite the default configuration.
 
     cp -f ../opentaal-openthesaurus/conf/* grails-app/conf/
+    cp -f ../opentaal-openthesaurus/i18n/* grails-app/i18n/
 
-Set the database password where `******` is found.
+Set the email user and database user password where `******` is found.
 
     vi grails-app/conf/application.yml
+
+(TODO Set sender email address in messages.properties.)
 
 Add the database connector.
 
