@@ -94,7 +94,11 @@ Log onto the deployment machine with SSH.
 
 ## 2.1 Create database
 
-This assumes you already have MySQL running.
+If needed, install MySQL.
+
+    sudo apt-get install mysql-server
+
+Create databsae and user.
 
     mysql -u root -p
     ******
@@ -103,7 +107,7 @@ This assumes you already have MySQL running.
     grant all privileges on openthesaurus.* to 'openthesaurus'@'localhost';
     exit
 
-Test database with the following, should report on an empty set of tables.
+Test database and user. This should report an empty set of tables.
 
     mysql -D openthesaurus -u openthesaurus -p
     ******
@@ -150,8 +154,13 @@ Restart Tomcat.
     sudo service tomcat8 restart
 
 
-## 2.5 Visit the website
+## 2.5 Create in-memory database
 
-Visit the instance of OpenThesaurus which is now.
+Create in-memory database, otherwise the website will result directly in errors.
 
-    http://thehostname:8080/
+    curl -I http://localhost:8080/synset/createMemoryDatabase
+
+
+## 2.6 Visit the website
+
+Visit the instance of OpenThesaurus which is at http://thehostname:8080/
