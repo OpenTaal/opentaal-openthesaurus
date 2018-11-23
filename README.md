@@ -46,41 +46,22 @@ Otherwise, clone the repo.
 
 ## 1.4 Apply custom configuration
 
-Compare the shipped configuration files with the custom configuration files.
+Compare the shipped configuration files with the custom configuration files by
+running the following.
 
-    diff -Nup grails-app/conf/application.yml ../opentaal-openthesaurus/conf/application.yml
-    diff -Nup grails-app/conf/application-development.properties ../opentaal-openthesaurus/conf/application-development.properties
-    diff -Nup grails-app/conf/application-production.properties ../opentaal-openthesaurus/conf/application-production.properties
-    diff -Nup grails-app/i18n/messages_nl.properties ../opentaal-openthesaurus/i18n/messages.properties
+    cd ../opentaal-openthesaurus/
+    ./compare.sh
+    more customize.sh
 
-Note that the last filename is without `_nl` and needs to be as such.
+Set the database and email user password in a file that is excluded by version
+control.
 
-If no changes need to be made to the custom configuration files, copy these to overwrite the default configuration.
+    vi password
 
-    cp -f ../opentaal-openthesaurus/conf/* grails-app/conf/
-    cp -f ../opentaal-openthesaurus/i18n/* grails-app/i18n/
+If no more changes need to be made, apply the custom configurtation.
 
-Set the email user and database user password where `******` is found.
-
-    vi grails-app/conf/application.yml
-
-(TODO Set sender email address in messages.properties.)
-
-Add the database connector.
-
-    cp -f ../opentaal-openthesaurus/1804/mysql-connector-java-8.0.13.jar lib/
-
-Note that installation of the database connection via a package from the operating system will not be available for Tomcat.
-
-This file was retrieved for Ubuntu 18.04 from https://dev.mysql.com/downloads/connector/j/ by doing the following. These steps are only needed when getting a newer version of the database adapter! **Hence, skip the following.**
-
-    cd /tmp
-    wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java_8.0.13-1ubuntu18.04_all.deb
-    dpkg -x mysql-connector-java_8.0.13-1ubuntu18.04_all.deb .
-    cp usr/share/java/mysql-connector-java-8.0.13.jar ~/workspace/opentaal-openthesaurus/1804/
-    cd ~/workspace/opentaal-openthesaurus/
-
-(For Ubuntu 18.10, download via https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java_8.0.13-1ubuntu18.10_all.deb or directly use `../opentaal-openthesaurus/1810/mysql-connector-java-8.0.13.jar` from this repository.)
+    ./customize.sh
+    cd ../openthesaurus/
 
 
 ## 1.5 Build WAR file
@@ -121,13 +102,26 @@ Test database and user. This should report an empty set of tables.
     exit
 
 
-## 2.2 Install Tomcat
+## 2.2 Create email account
+
+If needed, install an email service, snmp, such as postfix. Also install a way
+to easily test this, e.g. mailutils.
+
+    sudo apt-get install postfix mailutils
+
+Create user for email account.
+
+    sudo adduser openthesaurus
+
+
+## 2.3 Install Tomcat
 
 Assuming, Tomcat is not yet installed.
 
     sudo apt-get install tomcat8
 
-Test page should appear on http://thehostname:8080/
+Note that any dependencies such as openjdk-8-jre-headless will be installed
+automatically. Test page should appear on http://thehostname:8080/
 
 Ony if realy needed, add an existing user to the Tomcat group
 
@@ -136,7 +130,7 @@ Ony if realy needed, add an existing user to the Tomcat group
 and add the username after the line with `tomcat8:x:`
 
 
-## 2.3 Deploy on Tomcat
+## 2.4 Deploy on Tomcat
 
 Remove the contents of Tomcat's `ROOT` directory
 
@@ -149,7 +143,7 @@ Extract the war file.
 Note that no extra configuration is needed, even though some old documentation might suggest that.
 
 
-## 2.4 Restart Tomcat
+## 2.5 Restart Tomcat
 
 In another terminal, monitor the log file.
 
@@ -160,13 +154,31 @@ Restart Tomcat.
     sudo service tomcat8 restart
 
 
-## 2.5 Create in-memory database
+## 2.6 Create in-memory database
 
 Create in-memory database, otherwise the website will result directly in errors.
 
     curl -I http://localhost:8080/synset/createMemoryDatabase
 
 
-## 2.6 Visit the website
+## 2.7 Visit the website
 
 Visit the instance of OpenThesaurus which is at http://thehostname:8080/
+
+
+# 3 Downloading newer database connector
+
+This repository contains the proper database connections. When a new version
+needs to be downloaded, go to https://dev.mysql.com/downloads/connector/j/ to
+get the latest download link to get the proper package. Then do the following.
+
+    cd /tmp
+    wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java_8.0.13-1ubuntu18.04_all.deb
+    dpkg -x mysql-connector-java_8.0.13-1ubuntu18.04_all.deb .
+    cp usr/share/java/mysql-connector-java-8.0.13.jar ~/workspace/opentaal-openthesaurus/1804/
+
+For Ubuntu 18.10, download via https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java_8.0.13-1ubuntu18.10_all.deb and copy the JAR file to
+~/workspace/opentaal-openthesaurus/1804/
+
+Note that installation of the database connection via a package from the
+operating system will not be available for Tomcat.
