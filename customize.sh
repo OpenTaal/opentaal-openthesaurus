@@ -35,6 +35,11 @@ cp -f ../opentaal-artwork/ico/icon-shape-trans-64-48-32-16.ico ../openthesaurus/
 
 sed -i -e 's/height="93"/height="192"/g' ../openthesaurus/grails-app/views/_searchform.gsp
 sed -i -e 's/Neue Suche testen/Nieuwe zoekmethode testen/g' ../openthesaurus/grails-app/views/_searchform.gsp
+sed -i -e 's/Diese neue Suche öffnet beim Tippen kein Pop-up mit einer Vorschau, sondern/Deze nieuwe manier van zoeken opent tijdens typen geen pop-up met voorbeelden, behalve/g' ../openthesaurus/grails-app/views/_searchform.gsp
+sed -i -e 's/direkt das Suchergebnis/direct het zoekresultaat/g' ../openthesaurus/grails-app/views/_searchform.gsp
+sed -i -e 's/Schreibt uns/Laat ons weten/g' ../openthesaurus/grails-app/views/_searchform.gsp
+sed -i -e 's/wie Euch diese Suche gefällt/hoe deze manier van zoeken bevalt/g' ../openthesaurus/grails-app/views/_searchform.gsp
+sed -i -e 's/alte Suche/oud zoeken/g' ../openthesaurus/grails-app/views/_searchform.gsp
 
 sed -i -e 's/"Diese Website nutzt Cookies, um bestmögliche Funktionalität bieten zu können und für Werbung."/"Deze website gebruikt cookies om een zo goed mogelijke functionaliteit te bieden."/g' ../openthesaurus/grails-app/views/layouts/_scripts.gsp
 sed -i -e 's/dismiss: "Okay",/dismiss: "Oké",/g' ../openthesaurus/grails-app/views/layouts/_scripts.gsp
