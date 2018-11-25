@@ -51,3 +51,19 @@ sed -i -e 's/https:\/\/github\.com\/danielnaber\/openthesaurus/https:\/\/github.
 sed -i -e 's/letzte 365 Tage/laatste 365 dagen/g' ../openthesaurus/grails-app/views/statistics/index.gsp
 
 sed -i -e 's/Stand: <g:formatDate format="dd.MM.yyyy HH:mm/Situatie op <g:formatDate format="yyyy-MM-dd HH.mm/g' ../openthesaurus/grails-app/views/statistics/index.gsp
+
+sed -i -e 's/Anzeige/Weergave/g' ../openthesaurus/grails-app/views/home/_ads.gsp
+sed -i -e 's/Anzeige/Weergave/g' ../openthesaurus/grails-app/views/synset/_newad.gsp
+sed -i -e 's/Anzeige/Weergave/g' ../openthesaurus/grails-app/views/synset/search.gsp
+sed -i -e 's/Anzeige/Weergave/g' ../openthesaurus/grails-app/views/synset/_ad.gsp
+
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/download.gsp
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/newsarchive.gsp
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/jsonpExample.gsp
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/index.gsp
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/imprint.gsp
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/newsletter.gsp
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/faq.gsp
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/werbung.gsp
+sed -i -e 's/Nothing here yet/Nog niets hier/g' ../openthesaurus/grails-app/views/about/api.gsp
+
